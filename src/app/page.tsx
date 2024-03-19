@@ -68,42 +68,47 @@ export default function Home() {
   const [previewTitle, setPreviewTitle] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
+  async function updateConfig() {
+    let response = await fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736")
+    let config: Config = await response.json();
+
+    setConfig(config);
+    setBrightness(config.brightness);
+    
+    const currentImage: UploadFile = {
+      uid: "0",
+      url: config.image_url,
+      name: config.image_url ?? ""
+    };
+
+    setFileList([currentImage]);
+  }
+
   // Fetch and display the current image.
   useEffect(() => {
-    fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736")
-      .then((response: Response) => response.json()
-      .then((config) => {
-        setConfig(config);
-        setBrightness(config.brightness);
-
-        const imageUrl = config.image_url;
-        const currentImage: UploadFile = {
-          uid: "0",
-          url: imageUrl,
-          name: imageUrl
-        };
-
-        setFileList([currentImage]);
-      }));
+    updateConfig();
   }, []);
 
   // Update the brightness.
   useEffect(() => {
-    if (brightness != undefined) {
-      setConfig((config) => {
-        if (config) {
-          config.brightness = brightness;
+    updateConfig()
+      .then(() => {
+        if (brightness != undefined) {
+          setConfig((config) => {
+            if (config) {
+              config.brightness = brightness;
 
-          fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(config)
+              fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(config)
+              });
+            }
+
+            return config;
           });
         }
-
-        return config;
       });
-    }
   }, [brightness]);
 
   const handleCancel = () => setPreviewOpen(false);
