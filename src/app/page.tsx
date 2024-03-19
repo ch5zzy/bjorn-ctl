@@ -3,7 +3,7 @@
 import { CameraTwoTone, CloudUploadOutlined } from "@ant-design/icons";
 import { Layout, Typography, TimePicker, Divider, Slider, SliderSingleProps, Upload, Modal, UploadFile, GetProp, UploadProps, Spin, Button, FloatButton } from "antd";
 import Link from "next/link";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, ReactElement, useEffect, useState } from "react";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { Title, Paragraph } = Typography;
@@ -39,7 +39,7 @@ const footerStyle: CSSProperties = {
 const brightnessMarks: SliderSingleProps["marks"] = {
   0.05: "Dim",
   0.4: "Default",
-  0.7: "Bright",
+  1: "Bright",
 };
 
 interface Config {
@@ -93,8 +93,6 @@ export default function Home() {
       setConfig((config) => {
         if (config) {
           config.brightness = brightness;
-          
-          console.log(config);
 
           fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736", {
             method: "PUT",
@@ -110,10 +108,18 @@ export default function Home() {
 
   const handleCancel = () => setPreviewOpen(false);
 
-  const handlePreview = async (file: UploadFile) => {
+  const addPreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as FileType);
+      getBase64(file.originFileObj as FileType)
+        .then((preview) => {
+          file.preview = preview;
+          return file;
+        });
     }
+  }
+
+  const handlePreview = async (file: UploadFile) => {
+    addPreview(file);
 
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
@@ -121,6 +127,7 @@ export default function Home() {
   };
 
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    newFileList.map(addPreview);
     setFileList(newFileList);
   };
 
@@ -143,6 +150,12 @@ export default function Home() {
           onPreview={handlePreview}
           onChange={handleChange}
           maxCount={1}
+          showUploadList={{ showRemoveIcon: false }}
+          itemRender={(originNode: ReactElement, file: UploadFile<any>, fileList: object[], actions: { preview: () => void }) => {
+            return <Button style={{ width: "100%", height: "100%" }} onClick={actions.preview}>
+              <img src={file.preview ?? file.url} style={{ width: "64px", imageRendering: "crisp-edges" }}></img>
+            </Button>
+          }}
         >
           <button>
             <CameraTwoTone />
