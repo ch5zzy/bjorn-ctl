@@ -1,13 +1,10 @@
 "use client";
 
-import { CameraTwoTone, CloudUploadOutlined } from "@ant-design/icons";
-import { Layout, Typography, TimePicker, Divider, Slider, SliderSingleProps, Upload, Modal, UploadFile, GetProp, UploadProps, Spin, Button, FloatButton, Radio, RadioChangeEvent, message } from "antd";
+import { CloudUploadOutlined } from "@ant-design/icons";
+import { Layout, Typography, TimePicker, UploadFile, FloatButton, message } from "antd";
 import Link from "next/link";
-import { CSSProperties, ReactElement, useEffect, useState } from "react";
-import convert from "./util/minify";
-import { KernelEnum } from "sharp";
+import { CSSProperties, useEffect, useState } from "react";
 import { RcFile } from "antd/es/upload";
-import dayjs from "dayjs";
 import BrightnessSettings from "./sections/BrightnessSettings";
 import { Config, ConfigTime } from "./types/Config";
 import DimTimeSettings from "./sections/DimTimeSettings";

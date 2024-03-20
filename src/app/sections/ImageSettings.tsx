@@ -1,12 +1,11 @@
 "use client";
 
-import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps } from "antd";
+import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker } from "antd";
 import { useState } from "react";
 import minify from "../util/minify";
 import { KernelEnum } from "sharp";
 import { CameraTwoTone } from "@ant-design/icons";
-import { useSearchParams } from "next/navigation";
-import getAdminPassword from "../util/admin";
+import { Color } from "antd/es/color-picker";
 
 const { Paragraph } = Typography;
 
@@ -19,12 +18,13 @@ export default function ImageSettings(props: {
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
     const [kernel, setKernel] = useState<keyof KernelEnum>("nearest");
+    const [backgroundColor, setBackgroundColor] = useState<Color>();
     
     const handleCancel = () => setPreviewOpen(false);
 
     const getPreview = async (file: File | Blob) => {
         const imgBase64 = Buffer.from(await file.arrayBuffer()).toString("base64");
-        return minify(imgBase64, kernel);
+        return minify(imgBase64, kernel, JSON.stringify(backgroundColor?.toRgb()));
     }
 
     const handlePreview = async (file: UploadFile) => {
@@ -72,6 +72,13 @@ export default function ImageSettings(props: {
             {
                 props.isAdmin &&
                 <>
+                    <ColorPicker
+                        defaultValue="#000000"
+                        showText={(color) => <span>Background color ({color.toHexString()})</span>}
+                        onChangeComplete={setBackgroundColor}
+                        style={{ marginBottom: 10 }}
+                        disabledAlpha
+                    />
                     <Paragraph>Select an interpolation type to use when resizing the image.</Paragraph>
                     <Radio.Group defaultValue="nearest" buttonStyle="solid" onChange={(e: RadioChangeEvent) => setKernel(e.target.value)}>
                         <Radio.Button value="nearest">Nearest</Radio.Button>
