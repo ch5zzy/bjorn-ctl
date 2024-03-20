@@ -10,7 +10,5 @@ export default async function uploadImage(imgBase64: string): Promise<string> {
         body: uploadData
     })).json();
 
-    console.log(response);
-
     return response.data.url;
 }
