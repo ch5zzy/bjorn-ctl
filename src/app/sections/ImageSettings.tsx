@@ -35,7 +35,10 @@ export default function ImageSettings(props: {
         setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
     };
 
-    const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    const handleChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
+        newFileList.map(async (file) => {
+            file.preview = file.preview ?? await getPreview(file.originFileObj as File);
+        });
         props.setFileList(newFileList);
     };
 

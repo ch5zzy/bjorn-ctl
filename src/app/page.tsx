@@ -15,6 +15,7 @@ import ImageSettings from "./sections/ImageSettings";
 import { useSearchParams } from "next/navigation";
 
 import getAdminPassword from "./util/admin";
+import uploadImage from "./util/upload";
 const { Header, Footer, Sider, Content } = Layout;
 const { Title, Paragraph } = Typography;
 
@@ -33,11 +34,12 @@ const titleStyle: CSSProperties = {
 
 const contentStyle: CSSProperties = {
 	margin: 20,
-	padding: 20,
+	padding: 30,
 	height: "calc(100vh - 170px)",
 	backgroundColor: "white",
 	borderRadius: 20,
-	overflow: "hidden"
+	overflow: "scroll",
+	scrollbarWidth: "none"
 };
 
 const footerStyle: CSSProperties = {
@@ -66,8 +68,8 @@ export default function App() {
 
 		setConfig(config);
 		setBrightness(config.brightness);
-		setDimStartTime(config.dim_start);
-		setDimEndTime(config.dim_end);
+		setDimStartTime(config.dim_start ?? {});
+		setDimEndTime(config.dim_end ?? {});
 
 		response = await fetch(config.image_url ?? "");
 		if (response.status != 200) return;
@@ -78,6 +80,8 @@ export default function App() {
 			name: config.image_url ?? "",
 			originFileObj: await response.blob() as RcFile
 		};
+
+		if (fileList.length > 0 && fileList[0].url === undefined) return;
 
 		setFileList([currentImage]);
 	}
@@ -92,33 +96,33 @@ export default function App() {
 	}, [searchParams]);
 
 	// Update the config.
-	function applyConfig() {
-		updateConfig()
-			.then(() => {
-				setConfig((config) => {
-					if (config) {
-						config.brightness = brightness;
-						config.dim_start = dimStartTime;
-						config.dim_end = dimEndTime;
+	async function applyConfig() {
+		await updateConfig();
 
-						fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736", {
-							method: "PUT",
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify(config)
-						})
-							.then(() => {
-								messageApi.destroy();
-								messageApi.success("Successfully updated settings", 2)
-							})
-							.catch(() => {
-								messageApi.destroy();
-								messageApi.error("Failed to update settings", 2);
-							});
-					}
+		if (config) {
+			config.brightness = brightness;
+			config.dim_start = dimStartTime;
+			config.dim_end = dimEndTime;
 
-					return config;
-				});
-			});
+			if (config.image_url !== fileList[0].url ?? "")
+				config.image_url = await uploadImage(fileList[0].preview ?? "");
+		}
+
+		await fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736", {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(config)
+		})
+		.then(() => {
+			messageApi.destroy();
+			messageApi.success("Successfully updated settings", 2)
+		})
+		.catch(() => {
+			messageApi.destroy();
+			messageApi.error("Failed to update settings", 2);
+		});
+		
+		setConfig(config);
 	}
 
 	return (
@@ -128,11 +132,8 @@ export default function App() {
 			<Header style={headerStyle}><Title style={titleStyle} level={2}>bjorn-ctl</Title></Header>
 			<Content style={contentStyle}>
 				<BrightnessSettings brightness={brightness} setBrightness={setBrightness} />
-
 				<DimTimeSettings dimStartTime={dimStartTime} dimEndTime={dimEndTime} setDimStartTime={setDimStartTime} setDimEndTime={setDimEndTime} />
-
 				<ImageSettings fileList={fileList} setFileList={setFileList} isAdmin={isAdmin} />
-
 				<FloatButton type="primary" tooltip="Apply settings" icon={<CloudUploadOutlined />} onClick={applyConfig} />
 			</Content>
 			<Footer style={footerStyle}>Made with ❤️ by <Link href="https://github.com/ch5zzy">ch5zzy</Link></Footer>
