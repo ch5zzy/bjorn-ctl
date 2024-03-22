@@ -19,7 +19,7 @@ export default function ImageSettings(props: {
     const [previewTitle, setPreviewTitle] = useState("");
     const [kernel, setKernel] = useState<keyof KernelEnum>("nearest");
     const [backgroundColor, setBackgroundColor] = useState<Color>();
-    
+
     const handleCancel = () => setPreviewOpen(false);
 
     const getPreview = async (file: File | Blob) => {

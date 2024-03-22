@@ -12,11 +12,9 @@ import ImageSettings from "./sections/ImageSettings";
 import { useSearchParams } from "next/navigation";
 
 import getAdminPassword from "./util/admin";
-import uploadImage from "./util/upload";
+import { fetchConfig, uploadConfig, uploadImage } from "./util/upload";
 const { Header, Footer, Sider, Content } = Layout;
-const { Title, Paragraph } = Typography;
-
-const { RangePicker } = TimePicker;
+const { Title } = Typography;
 
 const headerStyle: CSSProperties = {
 	textAlign: "center",
@@ -60,15 +58,14 @@ export default function App() {
 	const [fileList, setFileList] = useState<UploadFile[]>([]);
 
 	async function updateConfig() {
-		let response = await fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736")
-		let config: Config = await response.json();
+		let config: Config = await fetchConfig();
 
 		setConfig(config);
 		setBrightness(config.brightness);
 		setDimStartTime(config.dim_start ?? {});
 		setDimEndTime(config.dim_end ?? {});
 
-		response = await fetch(config.image_url ?? "");
+		let response = await fetch(config.image_url ?? "");
 		if (response.status != 200) return;
 
 		const currentImage: UploadFile = {
@@ -105,20 +102,15 @@ export default function App() {
 				config.image_url = await uploadImage(fileList[0].preview ?? "");
 		}
 
-		await fetch("https://jsonblob.com/api/jsonBlob/1191846168362868736", {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(config)
-		})
-		.then(() => {
+		const ok = await uploadConfig(JSON.stringify(config))
+		if (ok) {
 			messageApi.destroy();
-			messageApi.success("Successfully updated settings", 2)
-		})
-		.catch(() => {
+			messageApi.success("Successfully updated settings", 2);
+		} else {
 			messageApi.destroy();
 			messageApi.error("Failed to update settings", 2);
-		});
-		
+		}
+
 		setConfig(config);
 	}
 
