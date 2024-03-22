@@ -13,7 +13,7 @@ import { useSearchParams } from "next/navigation";
 
 import getAdminPassword from "./util/admin";
 import { fetchConfig, uploadConfig, uploadImage } from "./util/upload";
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Footer, Content } = Layout;
 const { Title } = Typography;
 
 const headerStyle: CSSProperties = {

@@ -1,13 +1,21 @@
 "use client";
 
-import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker } from "antd";
-import { useState } from "react";
+import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card } from "antd";
+import { CSSProperties, useState } from "react";
 import minify from "../util/minify";
 import { KernelEnum } from "sharp";
 import { CameraTwoTone } from "@ant-design/icons";
 import { Color } from "antd/es/color-picker";
+import Search from "antd/es/input/Search";
+import searchGifs from "../util/gif";
+import { Gallery, Image } from "react-grid-gallery";
+import { RcFile } from "antd/es/upload";
 
 const { Paragraph } = Typography;
+
+const cardStyle: CSSProperties = {
+    marginTop: 10
+};
 
 export default function ImageSettings(props: {
     fileList: UploadFile[],
@@ -19,6 +27,7 @@ export default function ImageSettings(props: {
     const [previewTitle, setPreviewTitle] = useState("");
     const [kernel, setKernel] = useState<keyof KernelEnum>("nearest");
     const [backgroundColor, setBackgroundColor] = useState<Color>();
+    const [gifs, setGifs] = useState<Image[]>([]);
 
     const handleCancel = () => setPreviewOpen(false);
 
@@ -32,7 +41,7 @@ export default function ImageSettings(props: {
 
         setPreviewImage(file.url || (file.preview as string));
         setPreviewOpen(true);
-        setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
+        setPreviewTitle(file.name);
     };
 
     const handleChange: UploadProps["onChange"] = async ({ fileList: newFileList }) => {
@@ -41,6 +50,40 @@ export default function ImageSettings(props: {
         });
         props.setFileList(newFileList);
     };
+
+    async function updateGifSearch(term: string) {
+        const result = await searchGifs(term);
+
+        setGifs(result.data.map((gif) => {
+            const gifImage = gif.images.downsized;
+            const galleryImage: Image = {
+                src: gifImage.url,
+                width: gifImage.width,
+                height: gifImage.height,
+                alt: gif.title
+            };
+
+            return galleryImage;
+        }));
+    }
+
+    function onSelectImage(index: number, image: Image) {
+        selectGif(image.src, image.alt);
+    }
+
+    async function selectGif(url: string, name?: string) {
+        let response = await fetch(url ?? "");
+        if (response.status != 200) return;
+
+        const currentImage: UploadFile = {
+            uid: "0",
+            name: name ?? url,
+            originFileObj: await response.blob() as RcFile
+        };
+        currentImage.preview = await getPreview(currentImage.originFileObj as File);
+
+        props.setFileList([currentImage]);
+    }
 
     return (
         <>
@@ -76,17 +119,22 @@ export default function ImageSettings(props: {
                         defaultValue="#000000"
                         showText={(color) => <span>Background color ({color.toHexString()})</span>}
                         onChangeComplete={setBackgroundColor}
-                        style={{ marginBottom: 10 }}
                         disabledAlpha
                     />
-                    <Paragraph>Select an interpolation type to use when resizing the image.</Paragraph>
-                    <Radio.Group defaultValue="nearest" buttonStyle="solid" onChange={(e: RadioChangeEvent) => setKernel(e.target.value)}>
-                        <Radio.Button value="nearest">Nearest</Radio.Button>
-                        <Radio.Button value="cubic">Cubic</Radio.Button>
-                        <Radio.Button value="mitchell">Mitchell</Radio.Button>
-                        <Radio.Button value="lanczos2">Lanczos2</Radio.Button>
-                        <Radio.Button value="lanczos3">Lanczos3</Radio.Button>
-                    </Radio.Group>
+                    <Card title="Interpolation type" size="small" style={cardStyle}>
+                        <Paragraph>Select an interpolation type to use when resizing the image.</Paragraph>
+                        <Radio.Group defaultValue="nearest" buttonStyle="solid" onChange={(e: RadioChangeEvent) => setKernel(e.target.value)}>
+                            <Radio.Button value="nearest">Nearest</Radio.Button>
+                            <Radio.Button value="cubic">Cubic</Radio.Button>
+                            <Radio.Button value="mitchell">Mitchell</Radio.Button>
+                            <Radio.Button value="lanczos2">Lanczos2</Radio.Button>
+                            <Radio.Button value="lanczos3">Lanczos3</Radio.Button>
+                        </Radio.Group>
+                    </Card>
+                    <Card title="GIFs" size="small" style={cardStyle}>
+                        <Search placeholder="Search for GIFs" onSearch={updateGifSearch} style={{ marginBottom: gifs.length > 0 ? 10 : 0 }} enterButton />
+                        <Gallery images={gifs} onSelect={onSelectImage} />
+                    </Card>
                 </>
             }
         </>
