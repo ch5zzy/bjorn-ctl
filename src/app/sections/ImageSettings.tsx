@@ -88,6 +88,7 @@ export default function ImageSettings(props: {
     return (
         <>
             <Divider orientation="left" orientationMargin="0">Image</Divider>
+            { !props.isAdmin && props.fileList.length == 0 && <Paragraph>No image configured.</Paragraph> }
             <Upload
                 listType="picture-card"
                 fileList={props.fileList}

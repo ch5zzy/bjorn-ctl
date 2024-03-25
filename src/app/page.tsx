@@ -65,8 +65,12 @@ export default function App() {
 		setDimStartTime(config.dim_start ?? {});
 		setDimEndTime(config.dim_end ?? {});
 
-		let response = await fetch(config.image_url ?? "");
-		if (response.status != 200) return;
+		let response;
+		try {
+			response = await fetch(config.image_url ?? "");
+		} catch (error) {
+			return;
+		}
 
 		const currentImage: UploadFile = {
 			uid: "0",
@@ -98,7 +102,7 @@ export default function App() {
 			config.dim_start = dimStartTime;
 			config.dim_end = dimEndTime;
 
-			if (config.image_url !== fileList[0].url ?? "")
+			if (fileList.length > 0 && (config.image_url !== fileList[0].url ?? ""))
 				config.image_url = await uploadImage(fileList[0].preview ?? "");
 		}
 
