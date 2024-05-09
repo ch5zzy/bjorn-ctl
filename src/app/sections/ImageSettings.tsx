@@ -1,20 +1,40 @@
+/* eslint-disable jsx-a11y/alt-text */
 "use client";
 
 import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card } from "antd";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, MouseEventHandler, useState } from "react";
 import minify from "../util/minify";
 import { KernelEnum } from "sharp";
 import { CameraTwoTone } from "@ant-design/icons";
 import { Color } from "antd/es/color-picker";
 import Search from "antd/es/input/Search";
 import searchGifs from "../util/gif";
-import { Gallery, Image } from "react-grid-gallery";
+import { Gallery, Image, ThumbnailImageProps } from "react-grid-gallery";
 import { RcFile } from "antd/es/upload";
 
 const { Paragraph } = Typography;
 
 const cardStyle: CSSProperties = {
     marginTop: 10
+};
+
+function ImageCard(props: ThumbnailImageProps) {
+    const [hover, setHover] = useState(false);
+
+    const onSelectHandler: MouseEventHandler<HTMLImageElement> = (event) => {
+        props.onSelect(props.index, event);
+    };
+
+    props.imageProps.style.transition = "filter 0.2s ease";
+    props.imageProps.style.filter = `brightness(${hover ? "50" : "100"}%)`;
+    props.imageProps.style.cursor = "pointer";
+
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...props.imageProps}
+        onMouseOver={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onClick={onSelectHandler}
+        title={props.imageProps.alt} />;
 };
 
 export default function ImageSettings(props: {
@@ -88,7 +108,7 @@ export default function ImageSettings(props: {
     return (
         <>
             <Divider orientation="left" orientationMargin="0">Image</Divider>
-            { !props.isAdmin && props.fileList.length == 0 && <Paragraph>No image configured.</Paragraph> }
+            {!props.isAdmin && props.fileList.length == 0 && <Paragraph>No image configured.</Paragraph>}
             <Upload
                 listType="picture-card"
                 fileList={props.fileList}
@@ -134,7 +154,7 @@ export default function ImageSettings(props: {
                     </Card>
                     <Card title="GIFs" size="small" style={cardStyle}>
                         <Search placeholder="Search for GIFs" onSearch={updateGifSearch} style={{ marginBottom: gifs.length > 0 ? 10 : 0 }} enterButton />
-                        <Gallery images={gifs} onSelect={onSelectImage} />
+                        <Gallery images={gifs} onSelect={onSelectImage} thumbnailImageComponent={ImageCard} />
                     </Card>
                 </>
             }
