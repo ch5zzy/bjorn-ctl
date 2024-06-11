@@ -8,7 +8,7 @@ import { KernelEnum } from "sharp";
 import { CameraTwoTone } from "@ant-design/icons";
 import { Color } from "antd/es/color-picker";
 import Search from "antd/es/input/Search";
-import searchGifs from "../util/gif";
+import { searchGiphyGifs, searchTenorGifs } from "../util/gif";
 import { Gallery, Image, ThumbnailImageProps } from "react-grid-gallery";
 import { RcFile } from "antd/es/upload";
 
@@ -37,6 +37,11 @@ function ImageCard(props: ThumbnailImageProps) {
         title={props.imageProps.alt} />;
 };
 
+enum GIFSearchEngine {
+    Giphy,
+    Tenor
+};
+
 export default function ImageSettings(props: {
     fileList: UploadFile[],
     setFileList: (files: UploadFile[]) => void,
@@ -46,6 +51,7 @@ export default function ImageSettings(props: {
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
     const [kernel, setKernel] = useState<keyof KernelEnum>("nearest");
+    const [searchEngine, setSearchEngine] = useState(GIFSearchEngine.Tenor);
     const [backgroundColor, setBackgroundColor] = useState<Color>();
     const [gifs, setGifs] = useState<Image[]>([]);
 
@@ -72,19 +78,30 @@ export default function ImageSettings(props: {
     };
 
     async function updateGifSearch(term: string) {
-        const result = await searchGifs(term);
+        let results;
+        switch (searchEngine) {
+            case GIFSearchEngine.Tenor:
+                results = await searchTenorGifs(term);
+                break;
+            case GIFSearchEngine.Giphy:
+                results = await searchGiphyGifs(term);
+                break;
+            default:
+                return;
+        }
 
-        setGifs(result.data.map((gif) => {
-            const gifImage = gif.images.downsized;
+        const thumbnails = results.map((gif) => {
             const galleryImage: Image = {
-                src: gifImage.url,
-                width: gifImage.width,
-                height: gifImage.height,
-                alt: gif.title
+                src: gif.url,
+                alt: gif.caption,
+                width: gif.width,
+                height: gif.height
             };
 
             return galleryImage;
-        }));
+        })
+
+        setGifs(thumbnails);
     }
 
     function onSelectImage(index: number, image: Image) {
@@ -153,7 +170,11 @@ export default function ImageSettings(props: {
                         </Radio.Group>
                     </Card>
                     <Card title="GIFs" size="small" style={cardStyle}>
-                        <Search placeholder="Search for GIFs" onSearch={updateGifSearch} style={{ marginBottom: gifs.length > 0 ? 10 : 0 }} enterButton />
+                        <Search placeholder="Search for GIFs" onSearch={updateGifSearch} style={{ marginBottom: 10 }} enterButton />
+                        <Radio.Group defaultValue={GIFSearchEngine.Tenor} buttonStyle="solid" onChange={(e: RadioChangeEvent) => setSearchEngine(e.target.value)} style={{ marginBottom: gifs.length > 0 ? 10 : 0 }}>
+                            <Radio.Button value={GIFSearchEngine.Tenor}>Tenor</Radio.Button>
+                            <Radio.Button value={GIFSearchEngine.Giphy}>GIPHY</Radio.Button>
+                        </Radio.Group>
                         <Gallery images={gifs} onSelect={onSelectImage} thumbnailImageComponent={ImageCard} />
                     </Card>
                 </>
