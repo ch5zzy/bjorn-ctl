@@ -27,6 +27,12 @@ const titleStyle: CSSProperties = {
 	marginTop: 12
 };
 
+const logoStyle: CSSProperties = {
+	background: "linear-gradient(45deg, rgba(97,230,196,1) 0%, rgba(255,143,252,1) 100%)",
+	backgroundClip: "text",
+	WebkitTextFillColor: "transparent"
+};
+
 const contentStyle: CSSProperties = {
 	margin: 20,
 	padding: 30,
@@ -42,7 +48,13 @@ const footerStyle: CSSProperties = {
 	bottom: 0,
 	width: "100%",
 	height: "70px"
-}
+};
+
+const floatButtonStyle: CSSProperties = {
+	position: "absolute",
+	bottom: 20,
+	right: 50
+};
 
 export default function App() {
 	const [config, setConfig] = useState<Config | undefined>(undefined);
@@ -125,12 +137,12 @@ export default function App() {
 		<Layout>
 			{contextHolder}
 
-			<Header style={headerStyle}><Title style={titleStyle} level={2}>bjorn-ctl</Title></Header>
+			<Header style={headerStyle}><Title style={titleStyle} level={2}>🦄 <span style={logoStyle}>bjorn-ctl</span></Title></Header>
 			<Content style={contentStyle}>
 				<BrightnessSettings brightness={brightness} setBrightness={setBrightness} />
 				<DimSettings dimStartTime={dimStartTime} dimEndTime={dimEndTime} dimBrightness={dimBrightness} setDimStartTime={setDimStartTime} setDimEndTime={setDimEndTime} setDimBrightness={setDimBrightness} />
 				<ImageSettings fileList={fileList} setFileList={setFileList} isAdmin={isAdmin} />
-				<FloatButton type="primary" tooltip="Apply settings" icon={<CloudUploadOutlined />} onClick={applyConfig} />
+				<FloatButton style={floatButtonStyle} type="primary" tooltip="Apply settings" icon={<CloudUploadOutlined />} onClick={applyConfig} />
 			</Content>
 			<Footer style={footerStyle}>Made with ❤️ by <Link href="https://github.com/ch5zzy">ch5zzy</Link></Footer>
 		</Layout>
