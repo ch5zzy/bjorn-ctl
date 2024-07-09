@@ -2,7 +2,7 @@
 "use client";
 
 import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card, Select } from "antd";
-import { CSSProperties, MouseEventHandler, useState } from "react";
+import { CSSProperties, MouseEventHandler, useEffect, useState } from "react";
 import minify from "../util/minify";
 import { KernelEnum } from "sharp";
 import { CameraTwoTone } from "@ant-design/icons";
@@ -58,7 +58,15 @@ export default function ImageSettings(props: {
     const [kernel, setKernel] = useState<keyof KernelEnum>("lanczos3");
     const [searchEngine, setSearchEngine] = useState(GIFSearchEngine.Tenor);
     const [backgroundColor, setBackgroundColor] = useState<Color>();
+    const [backgroundColorName, setBackgroundColorName] = useState<string>("Black");
     const [gifs, setGifs] = useState<Image[]>([]);
+
+    /**
+     * Update the background color name when a new color is selected.
+     */
+    useEffect(() => {
+        getColorName(backgroundColor?.toHex() ?? "000000").then(setBackgroundColorName);
+    }, [backgroundColor]);
 
     const handleCancel = () => setPreviewOpen(false);
 
@@ -127,6 +135,13 @@ export default function ImageSettings(props: {
         props.setFileList([currentImage]);
     }
 
+    async function getColorName(hex: string) {
+        const response = await fetch(`https://api.color.pizza/v1/?values=${hex}`);
+        const colorInfo = await response.json();
+
+        return colorInfo.paletteTitle;
+    }
+
     return (
         <>
             <Divider orientation="left" orientationMargin="0">Image</Divider>
@@ -158,12 +173,15 @@ export default function ImageSettings(props: {
             {
                 props.isAdmin &&
                 <>
-                    <ColorPicker
-                        defaultValue="#000000"
-                        showText={(color) => <span>Background color ({color.toHexString()})</span>}
-                        onChangeComplete={setBackgroundColor}
-                        disabledAlpha
-                    />
+                    <Card title="Transparency removal" size="small" style={cardStyle}>
+                        <Paragraph>Select a background color to use when replacing transparency.</Paragraph>
+                        <ColorPicker
+                            defaultValue="#000000"
+                            showText={(color) => <span>{backgroundColorName} ({color.toHexString()})</span>}
+                            onChangeComplete={setBackgroundColor}
+                            disabledAlpha
+                        />
+                    </Card>
                     <Card title="Interpolation type" size="small" style={cardStyle}>
                         <Paragraph>Select an interpolation type to use when resizing the image.</Paragraph>
                         <Select
