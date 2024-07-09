@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 "use client";
 
-import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card } from "antd";
+import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card, Select } from "antd";
 import { CSSProperties, MouseEventHandler, useState } from "react";
 import minify from "../util/minify";
 import { KernelEnum } from "sharp";
@@ -16,6 +16,11 @@ const { Paragraph } = Typography;
 
 const cardStyle: CSSProperties = {
     marginTop: 10
+};
+
+const selectStyle: CSSProperties = {
+    width: "100%",
+    maxWidth: 160
 };
 
 function ImageCard(props: ThumbnailImageProps) {
@@ -50,7 +55,7 @@ export default function ImageSettings(props: {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
-    const [kernel, setKernel] = useState<keyof KernelEnum>("nearest");
+    const [kernel, setKernel] = useState<keyof KernelEnum>("lanczos3");
     const [searchEngine, setSearchEngine] = useState(GIFSearchEngine.Tenor);
     const [backgroundColor, setBackgroundColor] = useState<Color>();
     const [gifs, setGifs] = useState<Image[]>([]);
@@ -161,13 +166,34 @@ export default function ImageSettings(props: {
                     />
                     <Card title="Interpolation type" size="small" style={cardStyle}>
                         <Paragraph>Select an interpolation type to use when resizing the image.</Paragraph>
-                        <Radio.Group defaultValue="nearest" buttonStyle="solid" onChange={(e: RadioChangeEvent) => setKernel(e.target.value)}>
-                            <Radio.Button value="nearest">Nearest</Radio.Button>
-                            <Radio.Button value="cubic">Cubic</Radio.Button>
-                            <Radio.Button value="mitchell">Mitchell</Radio.Button>
-                            <Radio.Button value="lanczos2">Lanczos2</Radio.Button>
-                            <Radio.Button value="lanczos3">Lanczos3</Radio.Button>
-                        </Radio.Group>
+                        <Select
+                            style={selectStyle}
+                            defaultValue={kernel}
+                            onChange={setKernel}
+                            showSearch={true}
+                            popupMatchSelectWidth={false}
+                            options={[
+                                {
+                                    value: "nearest",
+                                    label: "Nearest"
+                                },
+                                {
+                                    value: "cubic",
+                                    label: "Cubic"
+                                },
+                                {
+                                    value: "mitchell",
+                                    label: "Mitchell"
+                                },
+                                {
+                                    value: "lanczos2",
+                                    label: "Lanczos2"
+                                },
+                                {
+                                    value: "lanczos3",
+                                    label: "Lanczos3"
+                                }
+                            ]} />
                     </Card>
                     <Card title="GIFs" size="small" style={cardStyle}>
                         <Search placeholder="Search for GIFs" onSearch={updateGifSearch} style={{ marginBottom: 10 }} enterButton />

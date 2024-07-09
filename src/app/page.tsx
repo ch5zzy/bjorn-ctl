@@ -30,7 +30,7 @@ const titleStyle: CSSProperties = {
 const contentStyle: CSSProperties = {
 	margin: 20,
 	padding: 30,
-	height: "calc(100vh - 170px)",
+	height: "calc(100dvh - 170px)",
 	backgroundColor: "white",
 	borderRadius: 20,
 	overflow: "scroll",
