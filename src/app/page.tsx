@@ -7,7 +7,7 @@ import { CSSProperties, useEffect, useState } from "react";
 import { RcFile } from "antd/es/upload";
 import BrightnessSettings from "./sections/BrightnessSettings";
 import { Config, ConfigTime } from "./types/Config";
-import DimTimeSettings from "./sections/DimTimeSettings";
+import DimSettings from "./sections/DimSettings";
 import ImageSettings from "./sections/ImageSettings";
 import { useSearchParams } from "next/navigation";
 
@@ -49,6 +49,7 @@ export default function App() {
 	const [brightness, setBrightness] = useState<number | undefined>(undefined);
 	const [dimStartTime, setDimStartTime] = useState<ConfigTime | undefined>(undefined);
 	const [dimEndTime, setDimEndTime] = useState<ConfigTime | undefined>(undefined);
+	const [dimBrightness, setDimBrightness] = useState<number | undefined>(undefined);
 	const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
 	const searchParams = useSearchParams();
@@ -64,6 +65,7 @@ export default function App() {
 		setBrightness(config.brightness);
 		setDimStartTime(config.dim_start ?? {});
 		setDimEndTime(config.dim_end ?? {});
+		setDimBrightness(config.dim_brightness ?? 0.05);
 
 		let response;
 		try {
@@ -101,6 +103,7 @@ export default function App() {
 			config.brightness = brightness;
 			config.dim_start = dimStartTime;
 			config.dim_end = dimEndTime;
+			config.dim_brightness = dimBrightness;
 
 			if (fileList.length > 0 && (config.image_url !== fileList[0].url ?? ""))
 				config.image_url = await uploadImage(fileList[0].preview ?? "");
@@ -125,7 +128,7 @@ export default function App() {
 			<Header style={headerStyle}><Title style={titleStyle} level={2}>bjorn-ctl</Title></Header>
 			<Content style={contentStyle}>
 				<BrightnessSettings brightness={brightness} setBrightness={setBrightness} />
-				<DimTimeSettings dimStartTime={dimStartTime} dimEndTime={dimEndTime} setDimStartTime={setDimStartTime} setDimEndTime={setDimEndTime} />
+				<DimSettings dimStartTime={dimStartTime} dimEndTime={dimEndTime} dimBrightness={dimBrightness} setDimStartTime={setDimStartTime} setDimEndTime={setDimEndTime} setDimBrightness={setDimBrightness} />
 				<ImageSettings fileList={fileList} setFileList={setFileList} isAdmin={isAdmin} />
 				<FloatButton type="primary" tooltip="Apply settings" icon={<CloudUploadOutlined />} onClick={applyConfig} />
 			</Content>

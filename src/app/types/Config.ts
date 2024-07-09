@@ -8,5 +8,6 @@ export interface Config {
     brightness?: number,
     rotation?: number,
     dim_start?: ConfigTime,
-    dim_end?: ConfigTime
+    dim_end?: ConfigTime,
+    dim_brightness?: number
 };
