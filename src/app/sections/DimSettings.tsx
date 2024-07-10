@@ -40,7 +40,7 @@ export default function DimSettings(props: {
                                 minute: end_dim?.minute()
                             });
                         }} />
-                        <Slider marks={dimBrightnessMarks} min={0.01} max={0.1} step={0.01} defaultValue={props.dimBrightness} onChangeComplete={props.setDimBrightness} />
+                        <Slider marks={dimBrightnessMarks} min={0.01} max={0.1} step={0.005} defaultValue={props.dimBrightness} onChangeComplete={props.setDimBrightness} />
                     </>
                     : <Spin />
             }
