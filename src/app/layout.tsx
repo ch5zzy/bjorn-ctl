@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
+import { ConfigProvider } from "antd";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Suspense>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: "#00d19d"
+              },
+            }}
+          >
           {children}
+          </ConfigProvider>
         </Suspense>
       </body>
     </html>

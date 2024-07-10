@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 "use client";
 
-import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card, Select } from "antd";
+import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card, Select, theme } from "antd";
 import { CSSProperties, MouseEventHandler, useEffect, useState } from "react";
 import minify from "../util/minify";
 import { KernelEnum } from "sharp";
@@ -14,13 +14,10 @@ import { RcFile } from "antd/es/upload";
 
 const { Paragraph } = Typography;
 
+const { useToken } = theme;
+
 const cardStyle: CSSProperties = {
     marginTop: 10
-};
-
-const selectStyle: CSSProperties = {
-    width: "100%",
-    maxWidth: 160
 };
 
 function ImageCard(props: ThumbnailImageProps) {
@@ -60,6 +57,8 @@ export default function ImageSettings(props: {
     const [backgroundColor, setBackgroundColor] = useState<Color>();
     const [backgroundColorName, setBackgroundColorName] = useState<string>("Black");
     const [gifs, setGifs] = useState<Image[]>([]);
+
+    const { token } = useToken();
 
     /**
      * Update the background color name when a new color is selected.
@@ -162,8 +161,8 @@ export default function ImageSettings(props: {
                 {
                     props.isAdmin &&
                     <button>
-                        <CameraTwoTone />
-                        <div style={{ marginTop: 8 }}>{props.fileList.length >= 1 ? "Replace" : "Upload"}</div>
+                        <CameraTwoTone twoToneColor={token.colorPrimary} />
+                        <div style={{ marginTop: 8, color: token.colorText }}>{props.fileList.length >= 1 ? "Replace" : "Upload"}</div>
                     </button>
                 }
             </Upload>
@@ -185,7 +184,6 @@ export default function ImageSettings(props: {
                     <Card title="Interpolation type" size="small" style={cardStyle}>
                         <Paragraph>Select an interpolation type to use when resizing the image.</Paragraph>
                         <Select
-                            style={selectStyle}
                             defaultValue={kernel}
                             onChange={setKernel}
                             showSearch={true}

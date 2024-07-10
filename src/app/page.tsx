@@ -137,7 +137,7 @@ export default function App() {
 		<Layout>
 			{contextHolder}
 
-			<Header style={headerStyle}><Title style={titleStyle} level={2}>🦄 <span style={logoStyle}>bjorn-ctl</span></Title></Header>
+			<Header style={headerStyle}><Title style={titleStyle} level={2}>🦄 <span style={logoStyle}>bjorn</span></Title></Header>
 			<Content style={contentStyle}>
 				<BrightnessSettings brightness={brightness} setBrightness={setBrightness} />
 				<DimSettings dimStartTime={dimStartTime} dimEndTime={dimEndTime} dimBrightness={dimBrightness} setDimStartTime={setDimStartTime} setDimEndTime={setDimEndTime} setDimBrightness={setDimBrightness} />
