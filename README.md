@@ -1,36 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Bjorn RGB Control Tool
 
-## Getting Started
+**This tool is meant to be used with a device running [bjorn-rgb](https://github.com/ch5zzy/bjorn-rgb).**
 
-First, run the development server:
+This web tool allows a user to configure the brightness, dimming, and image settings
+for a Raspberry Pi running [bjorn-rgb](https://github.com/ch5zzy/bjorn-rgb). Additionally,
+it provides GIF searching via Tenor and GIPHY for ease of selecting images to display.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Running
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Configure the provided `.env` file with all necessary API keys and IDs, including
+- A [jsonblob](https://jsonblob.com/) ID for storing the configuration.
+- An [imgbb](https://api.imgbb.com/) API key for storing images.
+- A [Tenor](https://developers.google.com/tenor/guides/quickstart) API key for.
+searching for GIFs on Tenor.
+- A [GIPHY](https://developers.giphy.com/docs/api/) API key for searching for GIFs
+on GIPHY.
+- An admin password to allow a user to customize the displayed image.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Then, run `npm run dev` to run the configuration tool. To access the admin interface,
+append `?pwd=` followed by your configured password to the end of the URL where
+the tool is hosted.
