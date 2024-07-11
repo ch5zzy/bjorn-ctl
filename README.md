@@ -17,6 +17,6 @@ searching for GIFs on Tenor.
 on GIPHY.
 - An admin password to allow a user to customize the displayed image.
 
-Then, run `npm run dev` to run the configuration tool. To access the admin interface,
-append `?pwd=` followed by your configured password to the end of the URL where
-the tool is hosted.
+Then, install dependencies and run the configuration tool with `npm i; npm run dev`.
+To access the admin interface, append `?pwd=` followed by your configured password
+to the end of the URL where the tool is hosted.
