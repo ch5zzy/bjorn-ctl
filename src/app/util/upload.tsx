@@ -1,6 +1,8 @@
 "use server";
 
-export async function fetchConfig() {
+import { Config } from "../types/Config";
+
+export async function fetchConfig(): Promise<Config> {
     const response = await fetch(`https://jsonblob.com/api/jsonBlob/${process.env.JSONBLOB_ID}`);
     return await response.json();
 }

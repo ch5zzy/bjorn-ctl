@@ -1,18 +1,20 @@
 "use client";
 
 import { CloudUploadOutlined } from "@ant-design/icons";
-import { Layout, Typography, UploadFile, FloatButton, message } from "antd";
+import { Layout, Typography, UploadFile, FloatButton, message, Radio, Divider } from "antd";
 import Link from "next/link";
 import { CSSProperties, useEffect, useState } from "react";
 import { RcFile } from "antd/es/upload";
 import BrightnessSettings from "./sections/BrightnessSettings";
-import { Config, ConfigTime } from "./types/Config";
+import { Config, ConfigGraphicsMode, ConfigScript, ConfigTime } from "./types/Config";
 import DimSettings from "./sections/DimSettings";
 import ImageSettings from "./sections/ImageSettings";
 import { useSearchParams } from "next/navigation";
 
 import getAdminPassword from "./util/admin";
 import { fetchConfig, uploadConfig, uploadImage } from "./util/upload";
+import ScriptSettings from "./sections/ScriptSettings";
+import GraphicsSettings from "./sections/GraphicsSettings";
 const { Header, Footer, Content } = Layout;
 const { Title } = Typography;
 
@@ -58,6 +60,7 @@ const floatButtonStyle: CSSProperties = {
 
 export default function App() {
 	const [config, setConfig] = useState<Config | undefined>(undefined);
+	const [graphicsMode, setGraphicsMode] = useState<ConfigGraphicsMode>();
 	const [brightness, setBrightness] = useState<number | undefined>(undefined);
 	const [dimStartTime, setDimStartTime] = useState<ConfigTime | undefined>(undefined);
 	const [dimEndTime, setDimEndTime] = useState<ConfigTime | undefined>(undefined);
@@ -69,15 +72,36 @@ export default function App() {
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const [fileList, setFileList] = useState<UploadFile[]>([]);
+	const [script, setScript] = useState<ConfigScript>({
+		setup: "",
+		loop: ""
+	});
+	const setSetupScript = (setup: string) => {
+		setScript((script) => {
+			script.setup = setup;
+			return script;
+		});
+	};
+	const setLoopScript = (loop: string) => {
+		setScript((script) => {
+			script.loop = loop;
+			return script;
+		});
+	};
 
 	async function updateConfig() {
-		let config: Config = await fetchConfig();
+		let config = await fetchConfig();
 
 		setConfig(config);
 		setBrightness(config.brightness);
 		setDimStartTime(config.dim_start ?? {});
 		setDimEndTime(config.dim_end ?? {});
 		setDimBrightness(config.dim_brightness ?? 0.05);
+		setGraphicsMode(config.graphics_mode ?? ConfigGraphicsMode.Image);
+		setScript(config.script ?? {
+			setup: "",
+			loop: ""
+		});
 
 		let response;
 		try {
@@ -112,13 +136,21 @@ export default function App() {
 		await updateConfig();
 
 		if (config) {
+			config.graphics_mode = graphicsMode;
 			config.brightness = brightness;
 			config.dim_start = dimStartTime;
 			config.dim_end = dimEndTime;
 			config.dim_brightness = dimBrightness;
 
-			if (fileList.length > 0 && (config.image_url !== fileList[0].url ?? ""))
-				config.image_url = await uploadImage(fileList[0].preview ?? "");
+			switch (config.graphics_mode) {
+				case ConfigGraphicsMode.Image:
+					if (fileList.length > 0 && (config.image_url !== fileList[0].url ?? ""))
+						config.image_url = await uploadImage(fileList[0].preview ?? "");
+					break;
+				case ConfigGraphicsMode.Script:
+					config.script = script;
+					break;
+			}
 		}
 
 		const ok = await uploadConfig(JSON.stringify(config))
@@ -141,7 +173,7 @@ export default function App() {
 			<Content style={contentStyle}>
 				<BrightnessSettings brightness={brightness} setBrightness={setBrightness} />
 				<DimSettings dimStartTime={dimStartTime} dimEndTime={dimEndTime} dimBrightness={dimBrightness} setDimStartTime={setDimStartTime} setDimEndTime={setDimEndTime} setDimBrightness={setDimBrightness} />
-				<ImageSettings fileList={fileList} setFileList={setFileList} isAdmin={isAdmin} />
+				<GraphicsSettings graphicsMode={graphicsMode} script={script} setGraphicsMode={setGraphicsMode} fileList={fileList} setFileList={setFileList} setSetupScriptContents={setSetupScript} setLoopScriptContents={setLoopScript} isAdmin={isAdmin} />
 				<FloatButton style={floatButtonStyle} type="primary" tooltip="Apply settings" icon={<CloudUploadOutlined />} onClick={applyConfig} />
 			</Content>
 			<Footer style={footerStyle}>Made with ❤️ by <Link href="https://github.com/ch5zzy">ch5zzy</Link></Footer>
