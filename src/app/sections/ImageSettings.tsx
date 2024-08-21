@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 "use client";
 
-import { Divider, Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card, Select, theme } from "antd";
+import { Modal, Radio, RadioChangeEvent, Typography, Upload, UploadFile, UploadProps, ColorPicker, Card, Select, theme } from "antd";
 import { CSSProperties, MouseEventHandler, useEffect, useState } from "react";
 import minify from "../util/minify";
 import { KernelEnum } from "sharp";
