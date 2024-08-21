@@ -19,7 +19,7 @@ export default function GraphicsSettings(props: {
                 <span style={{ paddingRight: 10 }}>Graphics</span>
                 {
                     props.graphicsMode &&
-                    <Radio.Group value={props.graphicsMode} onChange={(e: RadioChangeEvent) => props.setGraphicsMode(e.target.value)} buttonStyle="solid" disabled={!props.isAdmin}>
+                    <Radio.Group defaultValue={props.graphicsMode} onChange={(e: RadioChangeEvent) => props.setGraphicsMode(e.target.value)} buttonStyle="solid" disabled={!props.isAdmin}>
                         <Radio.Button value={ConfigGraphicsMode.Image}>Image</Radio.Button>
                         <Radio.Button value={ConfigGraphicsMode.Script}>Script</Radio.Button>
                     </Radio.Group>
@@ -29,7 +29,7 @@ export default function GraphicsSettings(props: {
                 props.graphicsMode && (props.graphicsMode == ConfigGraphicsMode.Image ?
                 <ImageSettings fileList={props.fileList} setFileList={props.setFileList} isAdmin={props.isAdmin} />
                 :
-                <ScriptSettings scriptContents={props.script} setSetupScriptContents={props.setSetupScriptContents} setLoopScriptContents={props.setLoopScriptContents} />
+                <ScriptSettings scriptContents={props.script} setSetupScriptContents={props.setSetupScriptContents} setLoopScriptContents={props.setLoopScriptContents} isAdmin={props.isAdmin} />
                 )
             }
         </>

@@ -18,6 +18,7 @@ export default function ScriptSettings(props: {
     scriptContents?: ConfigScript,
     setSetupScriptContents?: (code: string) => void,
     setLoopScriptContents?: (code: string) => void,
+    isAdmin: boolean
 }) {
     return (
         <>
@@ -32,6 +33,7 @@ export default function ScriptSettings(props: {
                 height={"250px"}
                 value={props.scriptContents?.setup}
                 onChange={props.setSetupScriptContents}
+                readOnly={!props.isAdmin}
                 basicSetup={editorSetup} />
             <Title level={5}>Loop script</Title>
             <Paragraph>Use this script for code that should run continuously.</Paragraph>
@@ -41,6 +43,7 @@ export default function ScriptSettings(props: {
                 height={"400px"}
                 value={props.scriptContents?.loop}
                 onChange={props.setLoopScriptContents}
+                readOnly={!props.isAdmin}
                 basicSetup={editorSetup} />
         </>
     )

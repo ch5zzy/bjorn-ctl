@@ -133,24 +133,22 @@ export default function App() {
 
 	// Update the config.
 	async function applyConfig() {
-		await updateConfig();
+		let config = await fetchConfig();
 
-		if (config) {
-			config.graphics_mode = graphicsMode;
-			config.brightness = brightness;
-			config.dim_start = dimStartTime;
-			config.dim_end = dimEndTime;
-			config.dim_brightness = dimBrightness;
+		config.graphics_mode = graphicsMode;
+		config.brightness = brightness;
+		config.dim_start = dimStartTime;
+		config.dim_end = dimEndTime;
+		config.dim_brightness = dimBrightness;
 
-			switch (config.graphics_mode) {
-				case ConfigGraphicsMode.Image:
-					if (fileList.length > 0 && (config.image_url !== fileList[0].url ?? ""))
-						config.image_url = await uploadImage(fileList[0].preview ?? "");
-					break;
-				case ConfigGraphicsMode.Script:
-					config.script = script;
-					break;
-			}
+		switch (config.graphics_mode) {
+			case ConfigGraphicsMode.Image:
+				if (fileList.length > 0 && (config.image_url !== fileList[0].url ?? ""))
+					config.image_url = await uploadImage(fileList[0].preview ?? "");
+				break;
+			case ConfigGraphicsMode.Script:
+				config.script = script;
+				break;
 		}
 
 		const ok = await uploadConfig(JSON.stringify(config))
@@ -163,6 +161,7 @@ export default function App() {
 		}
 
 		setConfig(config);
+		updateConfig();
 	}
 
 	return (
