@@ -1,4 +1,4 @@
-import { Divider, Radio, RadioChangeEvent, UploadFile } from "antd";
+import { Divider, Radio, RadioChangeEvent, Spin, UploadFile } from "antd";
 import { ConfigGraphicsMode, ConfigScript } from "../types/Config";
 import ImageSettings from "./ImageSettings";
 import ScriptSettings from "./ScriptSettings";
@@ -26,11 +26,13 @@ export default function GraphicsSettings(props: {
                 }
             </Divider>
             {
-                props.graphicsMode && (props.graphicsMode == ConfigGraphicsMode.Image ?
-                <ImageSettings fileList={props.fileList} setFileList={props.setFileList} isAdmin={props.isAdmin} />
-                :
-                <ScriptSettings scriptContents={props.script} setSetupScriptContents={props.setSetupScriptContents} setLoopScriptContents={props.setLoopScriptContents} isAdmin={props.isAdmin} />
-                )
+                props.graphicsMode ?
+                    (props.graphicsMode == ConfigGraphicsMode.Image ?
+                        <ImageSettings fileList={props.fileList} setFileList={props.setFileList} isAdmin={props.isAdmin} />
+                        :
+                        <ScriptSettings scriptContents={props.script} setSetupScriptContents={props.setSetupScriptContents} setLoopScriptContents={props.setLoopScriptContents} isAdmin={props.isAdmin} />
+                    )
+                    : <Spin />
             }
         </>
     );

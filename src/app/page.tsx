@@ -65,6 +65,7 @@ export default function App() {
 	const [dimStartTime, setDimStartTime] = useState<ConfigTime | undefined>(undefined);
 	const [dimEndTime, setDimEndTime] = useState<ConfigTime | undefined>(undefined);
 	const [dimBrightness, setDimBrightness] = useState<number | undefined>(undefined);
+	const [detectTimezoneFromIP, setDetectTimezoneFromIP] = useState<boolean | undefined>(undefined);
 	const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
 	const searchParams = useSearchParams();
@@ -97,6 +98,7 @@ export default function App() {
 		setDimStartTime(config.dim_start ?? {});
 		setDimEndTime(config.dim_end ?? {});
 		setDimBrightness(config.dim_brightness ?? 0.05);
+		setDetectTimezoneFromIP(config.detect_timezone_from_ip ?? true);
 		setGraphicsMode(config.graphics_mode ?? ConfigGraphicsMode.Image);
 		setScript(config.script ?? {
 			setup: "",
@@ -140,10 +142,11 @@ export default function App() {
 		config.dim_start = dimStartTime;
 		config.dim_end = dimEndTime;
 		config.dim_brightness = dimBrightness;
+		config.detect_timezone_from_ip = detectTimezoneFromIP;
 
 		switch (config.graphics_mode) {
 			case ConfigGraphicsMode.Image:
-				if (fileList.length > 0 && (config.image_url !== fileList[0].url ?? ""))
+				if (fileList.length > 0 && (config.image_url !== fileList[0].url || ""))
 					config.image_url = await uploadImage(fileList[0].preview ?? "");
 				break;
 			case ConfigGraphicsMode.Script:
@@ -170,10 +173,33 @@ export default function App() {
 
 			<Header style={headerStyle}><Title style={titleStyle} level={2}>🦄 <span style={logoStyle}>bjorn</span></Title></Header>
 			<Content style={contentStyle}>
-				<BrightnessSettings brightness={brightness} setBrightness={setBrightness} />
-				<DimSettings dimStartTime={dimStartTime} dimEndTime={dimEndTime} dimBrightness={dimBrightness} setDimStartTime={setDimStartTime} setDimEndTime={setDimEndTime} setDimBrightness={setDimBrightness} />
-				<GraphicsSettings graphicsMode={graphicsMode} script={script} setGraphicsMode={setGraphicsMode} fileList={fileList} setFileList={setFileList} setSetupScriptContents={setSetupScript} setLoopScriptContents={setLoopScript} isAdmin={isAdmin} />
-				<FloatButton style={floatButtonStyle} type="primary" tooltip="Apply settings" icon={<CloudUploadOutlined />} onClick={applyConfig} />
+				<BrightnessSettings
+					brightness={brightness}
+					setBrightness={setBrightness} />
+				<DimSettings
+					dimStartTime={dimStartTime}
+					dimEndTime={dimEndTime}
+					dimBrightness={dimBrightness}
+					detectTimezoneFromIP={detectTimezoneFromIP}
+					setDimStartTime={setDimStartTime}
+					setDimEndTime={setDimEndTime}
+					setDimBrightness={setDimBrightness}
+					setDetectTimezoneFromIP={setDetectTimezoneFromIP} />
+				<GraphicsSettings
+					graphicsMode={graphicsMode}
+					script={script}
+					setGraphicsMode={setGraphicsMode}
+					fileList={fileList}
+					setFileList={setFileList}
+					setSetupScriptContents={setSetupScript}
+					setLoopScriptContents={setLoopScript}
+					isAdmin={isAdmin} />
+				<FloatButton
+					style={floatButtonStyle}
+					type="primary"
+					tooltip="Apply settings"
+					icon={<CloudUploadOutlined />}
+					onClick={applyConfig} />
 			</Content>
 			<Footer style={footerStyle}>Made with ❤️ by <Link href="https://github.com/ch5zzy">ch5zzy</Link></Footer>
 		</Layout>

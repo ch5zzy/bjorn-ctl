@@ -28,11 +28,11 @@ export default function ScriptSettings(props: {
     const editorStyle: CSSProperties = {
         border: `2px solid ${token.colorBorder}`
     };
-    
+
     return (
         <>
             <Paragraph>
-                The scripts below will be run on the device. The <b>Setup script</b> will be run once, and the <b>Loop script</b> will be run continuously. See <Link href="https://github.com/ch5zzy/bjorn-rgb/blob/main/lang/README.md">Bjornlang documentation</Link> for help.
+                The scripts below will be run on the device. The <b>Setup script</b> will be run once, while the <b>Loop script</b> will be run continuously. See <Link href="https://github.com/ch5zzy/bjorn-rgb/blob/main/lang/README.md">Bjornlang documentation</Link> for help.
             </Paragraph>
             <Title level={5}>Setup script</Title>
             <Paragraph>Use this script to initialize any variables or define macros.</Paragraph>

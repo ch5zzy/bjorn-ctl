@@ -21,5 +21,6 @@ export interface Config {
     rotation?: number,
     dim_start?: ConfigTime,
     dim_end?: ConfigTime,
-    dim_brightness?: number
+    dim_brightness?: number,
+    detect_timezone_from_ip?: boolean
 };
