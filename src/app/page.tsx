@@ -6,14 +6,12 @@ import Link from "next/link";
 import { CSSProperties, useEffect, useState } from "react";
 import { RcFile } from "antd/es/upload";
 import BrightnessSettings from "./sections/BrightnessSettings";
-import { Config, ConfigGraphicsMode, ConfigScript, ConfigTime } from "./types/Config";
+import { Config, ConfigTime } from "./types/Config";
 import DimSettings from "./sections/DimSettings";
-import ImageSettings from "./sections/ImageSettings";
 import { useSearchParams } from "next/navigation";
 
 import getAdminPassword from "./util/admin";
 import { fetchConfig, uploadConfig, uploadImage } from "./util/upload";
-import ScriptSettings from "./sections/ScriptSettings";
 import GraphicsSettings from "./sections/GraphicsSettings";
 const { Header, Footer, Content } = Layout;
 const { Title } = Typography;
@@ -59,8 +57,6 @@ const floatButtonStyle: CSSProperties = {
 };
 
 export default function App() {
-	const [config, setConfig] = useState<Config | undefined>(undefined);
-	const [graphicsMode, setGraphicsMode] = useState<ConfigGraphicsMode>();
 	const [brightness, setBrightness] = useState<number | undefined>(undefined);
 	const [dimStartTime, setDimStartTime] = useState<ConfigTime | undefined>(undefined);
 	const [dimEndTime, setDimEndTime] = useState<ConfigTime | undefined>(undefined);
@@ -73,37 +69,15 @@ export default function App() {
 	const [messageApi, contextHolder] = message.useMessage();
 
 	const [fileList, setFileList] = useState<UploadFile[]>([]);
-	const [script, setScript] = useState<ConfigScript>({
-		setup: "",
-		loop: ""
-	});
-	const setSetupScript = (setup: string) => {
-		setScript((script) => {
-			script.setup = setup;
-			return script;
-		});
-	};
-	const setLoopScript = (loop: string) => {
-		setScript((script) => {
-			script.loop = loop;
-			return script;
-		});
-	};
 
 	async function updateConfig() {
 		let config = await fetchConfig();
 
-		setConfig(config);
 		setBrightness(config.brightness);
 		setDimStartTime(config.dim_start ?? {});
 		setDimEndTime(config.dim_end ?? {});
 		setDimBrightness(config.dim_brightness ?? 0.05);
 		setDetectTimezoneFromIP(config.detect_timezone_from_ip ?? true);
-		setGraphicsMode(config.graphics_mode ?? ConfigGraphicsMode.Image);
-		setScript(config.script ?? {
-			setup: "",
-			loop: ""
-		});
 
 		let response;
 		try {
@@ -137,22 +111,14 @@ export default function App() {
 	async function applyConfig() {
 		let config = await fetchConfig();
 
-		config.graphics_mode = graphicsMode;
 		config.brightness = brightness;
 		config.dim_start = dimStartTime;
 		config.dim_end = dimEndTime;
 		config.dim_brightness = dimBrightness;
 		config.detect_timezone_from_ip = detectTimezoneFromIP;
 
-		switch (config.graphics_mode) {
-			case ConfigGraphicsMode.Image:
-				if (fileList.length > 0 && (config.image_url !== fileList[0].url || ""))
-					config.image_url = await uploadImage(fileList[0].preview ?? "");
-				break;
-			case ConfigGraphicsMode.Script:
-				config.script = script;
-				break;
-		}
+		if (fileList.length > 0 && (config.image_url !== fileList[0].url || ""))
+			config.image_url = await uploadImage(fileList[0].preview ?? "");
 
 		const ok = await uploadConfig(JSON.stringify(config))
 		if (ok) {
@@ -163,7 +129,6 @@ export default function App() {
 			messageApi.error("Failed to update settings", 2);
 		}
 
-		setConfig(config);
 		updateConfig();
 	}
 
@@ -186,13 +151,8 @@ export default function App() {
 					setDimBrightness={setDimBrightness}
 					setDetectTimezoneFromIP={setDetectTimezoneFromIP} />
 				<GraphicsSettings
-					graphicsMode={graphicsMode}
-					script={script}
-					setGraphicsMode={setGraphicsMode}
 					fileList={fileList}
 					setFileList={setFileList}
-					setSetupScriptContents={setSetupScript}
-					setLoopScriptContents={setLoopScript}
 					isAdmin={isAdmin} />
 				<FloatButton
 					style={floatButtonStyle}
