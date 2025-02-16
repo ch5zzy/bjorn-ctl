@@ -28,7 +28,8 @@ export async function uploadImage(imgBase64: string): Promise<string | null> {
     });
 
     if (!response.ok) {
-        console.log(`Malformed response when uploading image:\nStatus: ${response.status}\nBody: ${response.body}`);
+        console.log(uploadData);
+        console.log(`Malformed response when uploading image:\nStatus: ${response.status}\nText: ${response.statusText}`);
         return null;
     }
 
