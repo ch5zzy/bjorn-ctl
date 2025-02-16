@@ -17,7 +17,7 @@ export async function uploadConfig(stringifiedConfig: string) {
     return response.ok;
 }
 
-export async function uploadImage(imgBase64: string): Promise<string> {
+export async function uploadImage(imgBase64: string): Promise<string|null> {
     const uploadData = new FormData();
     uploadData.append("key", process.env.IMGBB_API_KEY ?? "");
     uploadData.append("image", imgBase64.split(';base64,').pop() ?? "");
@@ -26,6 +26,11 @@ export async function uploadImage(imgBase64: string): Promise<string> {
         method: "POST",
         body: uploadData
     })).json();
+
+    if (!response.data) {
+        console.log(`Malformed response when uploading image:\n${response}`);
+        return null;
+    }
 
     return response.data.url;
 }

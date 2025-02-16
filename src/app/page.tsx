@@ -109,6 +109,7 @@ export default function App() {
 
 	// Update the config.
 	async function applyConfig() {
+		let ok = true;
 		let config = await fetchConfig();
 
 		config.brightness = brightness;
@@ -117,10 +118,16 @@ export default function App() {
 		config.dim_brightness = dimBrightness;
 		config.detect_timezone_from_ip = detectTimezoneFromIP;
 
-		if (fileList.length > 0 && (config.image_url !== fileList[0].url || ""))
-			config.image_url = await uploadImage(fileList[0].preview ?? "");
+		if (fileList.length > 0 && (config.image_url !== fileList[0].url || "")) {
+			const imageUrl = await uploadImage(fileList[0].preview ?? "");
+			if (imageUrl) {
+				config.image_url = imageUrl;
+			} else {
+				ok = false;
+			}
+		}
 
-		const ok = await uploadConfig(JSON.stringify(config))
+		ok &&= await uploadConfig(JSON.stringify(config))
 		if (ok) {
 			messageApi.destroy();
 			messageApi.success("Successfully updated settings", 2);
