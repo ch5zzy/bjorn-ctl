@@ -19,16 +19,14 @@ export async function uploadConfig(stringifiedConfig: string) {
 
 export async function uploadImage(imgBase64: string): Promise<string | null> {
     const uploadData = new FormData();
-    uploadData.append("key", process.env.IMGBB_API_KEY ?? "");
     uploadData.append("image", imgBase64.split(';base64,').pop() ?? "");
 
-    const response = await fetch("https://api.imgbb.com/1/upload", {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY ?? ""}`, {
         method: "POST",
         body: uploadData
     });
 
     if (!response.ok) {
-        console.log(uploadData);
         console.log(`Malformed response when uploading image:\nStatus: ${response.status}\nText: ${response.statusText}`);
         return null;
     }
