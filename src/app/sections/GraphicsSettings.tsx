@@ -9,7 +9,7 @@ export default function GraphicsSettings(props: {
     return (
         <>
             <Divider orientation="left" orientationMargin="0">
-                <span style={{ paddingRight: 10 }}>Image</span>
+                <span>Image</span>
             </Divider>
             <ImageSettings fileList={props.fileList} setFileList={props.setFileList} isAdmin={props.isAdmin} />
         </>
