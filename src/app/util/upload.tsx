@@ -4,7 +4,7 @@ import { Config } from "../types/Config";
 
 export async function fetchConfig(): Promise<Config> {
     const response = await fetch(`https://jsonblob.com/api/jsonBlob/${process.env.JSONBLOB_ID}`);
-    return await response.json();
+    return response.json();
 }
 
 export async function uploadConfig(stringifiedConfig: string) {
@@ -17,20 +17,20 @@ export async function uploadConfig(stringifiedConfig: string) {
     return response.ok;
 }
 
-export async function uploadImage(imgBase64: string): Promise<string|null> {
+export async function uploadImage(imgBase64: string): Promise<string | null> {
     const uploadData = new FormData();
     uploadData.append("key", process.env.IMGBB_API_KEY ?? "");
     uploadData.append("image", imgBase64.split(';base64,').pop() ?? "");
 
-    const response = await (await fetch("https://api.imgbb.com/1/upload", {
+    const response = await fetch("https://api.imgbb.com/1/upload", {
         method: "POST",
         body: uploadData
-    })).json();
+    });
 
-    if (!response.data) {
-        console.log(`Malformed response when uploading image:\n${response}`);
+    if (!response.ok) {
+        console.log(`Malformed response when uploading image:\nStatus: ${response.status}\nBody: ${response.body}`);
         return null;
     }
 
-    return response.data.url;
+    return (await response.json()).data.url;
 }
