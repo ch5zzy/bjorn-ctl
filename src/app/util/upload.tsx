@@ -46,9 +46,8 @@ export async function uploadImage(imgBase64: string): Promise<string | null> {
             break;
     }
 
-
     if (!response.ok) {
-        console.log(`Malformed response when uploading image:\nResponse: ${JSON.stringify(await response.json())}`);
+        console.error(`Malformed response when uploading image to ${host.toLowerCase()}:\nResponse: ${JSON.stringify(await response.json())}`);
         return null;
     }
 
