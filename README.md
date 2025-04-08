@@ -10,7 +10,7 @@ it provides GIF searching via Tenor and GIPHY for ease of selecting images to di
 
 Configure the provided `.env` file with all necessary API keys and IDs, including
 - A [jsonblob](https://jsonblob.com/) ID for storing the configuration.
-- An [imgbb](https://api.imgbb.com/) API key for storing images.
+- An [imgbb](https://api.imgbb.com/) or [freeimage.host](https://freeimage.host/) API key for storing images.
 - A [Tenor](https://developers.google.com/tenor/guides/quickstart) API key for.
 searching for GIFs on Tenor.
 - A [GIPHY](https://developers.giphy.com/docs/api/) API key for searching for GIFs
