@@ -12,7 +12,7 @@ const timeSettingsStyle: CSSProperties = {
 };
 
 const dimBrightnessMarks: SliderSingleProps["marks"] = {
-    0.01: "Faint",
+    0: "Off",
     0.05: "Very dim",
     0.1: "Dim"
 };
@@ -32,7 +32,7 @@ export default function DimSettings(props: {
             <Divider orientation="left" orientationMargin="0">Dimming</Divider>
             <Paragraph>The display will be dimmed to the selected brightness during the selected timeslot.</Paragraph>
             {
-                props.dimStartTime && props.dimEndTime && props.dimBrightness ?
+                props.dimStartTime !== undefined && props.dimEndTime !== undefined && props.dimBrightness !== undefined ?
                     <>
                         <div style={timeSettingsStyle}>
                             <RangePicker style={{ marginBottom: 5 }} defaultValue={[dayjs().hour(props.dimStartTime?.hour ?? 0).minute(props.dimStartTime?.minute ?? 0), dayjs().hour(props.dimEndTime?.hour ?? 0).minute(props.dimEndTime?.minute ?? 0)]} variant="filled" order={false} showHour showMinute onChange={(dates) => {
@@ -51,7 +51,7 @@ export default function DimSettings(props: {
                             }} /> <br />
                             <Checkbox defaultChecked={props.detectTimezoneFromIP} onChange={(e: CheckboxChangeEvent) => props.setDetectTimezoneFromIP(e.target.checked)}>Detect timezone from IP address when powered on</Checkbox>
                         </div>
-                        <Slider marks={dimBrightnessMarks} min={0.01} max={0.1} step={0.005} defaultValue={props.dimBrightness} onChangeComplete={props.setDimBrightness} />
+                        <Slider marks={dimBrightnessMarks} min={0} max={0.1} step={0.01} defaultValue={props.dimBrightness} onChangeComplete={props.setDimBrightness} />
                     </>
                     : <Spin />
             }
