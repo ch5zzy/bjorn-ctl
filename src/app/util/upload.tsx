@@ -34,14 +34,16 @@ export async function uploadImage(imgBase64: string): Promise<string | null> {
             uploadData.append("image", image);
             response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY ?? ""}`, {
                 method: "POST",
-                body: uploadData
+                body: uploadData,
+                mode: 'cors',
             });
             break;
         case ImageHost.FREEIMAGE:
             uploadData.append("source", image);
             response = await fetch(`https://freeimage.host/api/1/upload?key=${process.env.FREEIMAGE_API_KEY ?? ""}`, {
                 method: "POST",
-                body: uploadData
+                body: uploadData,
+                mode: 'cors',
             });
             break;
     }
