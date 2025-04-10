@@ -48,7 +48,8 @@ export default function DimSettings(props: {
                                     hour: end_dim?.hour(),
                                     minute: end_dim?.minute()
                                 });
-                            }} /> <br />
+                            }}
+                            allowClear={false} /> <br />
                             <Checkbox defaultChecked={props.detectTimezoneFromIP} onChange={(e: CheckboxChangeEvent) => props.setDetectTimezoneFromIP(e.target.checked)}>Detect timezone from IP address when powered on</Checkbox>
                         </div>
                         <Slider marks={dimBrightnessMarks} min={0} max={0.1} step={0.01} defaultValue={props.dimBrightness} onChangeComplete={props.setDimBrightness} />
