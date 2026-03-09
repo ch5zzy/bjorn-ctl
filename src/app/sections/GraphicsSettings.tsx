@@ -2,16 +2,20 @@ import { Divider, UploadFile } from "antd";
 import ImageSettings from "./ImageSettings";
 
 export default function GraphicsSettings(props: {
-    fileList: UploadFile[],
-    setFileList: (files: UploadFile[]) => void,
-    isAdmin: boolean
+  fileList: UploadFile[];
+  setFileList: (files: UploadFile[]) => void;
+  isAdmin: boolean;
 }) {
-    return (
-        <>
-            <Divider orientation="left" orientationMargin="0">
-                <span>Image</span>
-            </Divider>
-            <ImageSettings fileList={props.fileList} setFileList={props.setFileList} isAdmin={props.isAdmin} />
-        </>
-    );
+  return (
+    <>
+      <Divider orientation="left" orientationMargin="0">
+        <span>Image</span>
+      </Divider>
+      <ImageSettings
+        fileList={props.fileList}
+        setFileList={props.setFileList}
+        isAdmin={props.isAdmin}
+      />
+    </>
+  );
 }

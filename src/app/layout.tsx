@@ -23,11 +23,11 @@ export default function RootLayout({
           <ConfigProvider
             theme={{
               token: {
-                colorPrimary: "#00d19d"
+                colorPrimary: "#00d19d",
               },
             }}
           >
-          {children}
+            {children}
           </ConfigProvider>
         </Suspense>
       </body>
